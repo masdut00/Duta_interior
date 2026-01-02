@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duta Decor App</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+    <section id="view-login" class="view active">
+        <div class="login-box">
+            <img src="assets/logo.png" alt="Duta Decor" style="width: 80px; margin-bottom: 20px;">
+            
+            <h2>Duta Decor System</h2>
+            <p style="color:#666; margin-bottom:20px;">Aplikasi Perhitungan Interior</p>
+            
+            <input type="password" id="pinInput" placeholder="Masukkan PIN Akses">
+            <button onclick="Auth.login()">Masuk Aplikasi</button>
+        </div>
+    </section>
+
+    <section id="view-dashboard" class="view" style="display: none;">
+        <header>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3>Halo, Duta! 👋</h3>
+                <small id="status-db" class="status-badge">Connecting...</small>
+            </div>
+            <p style="margin-top:0; color:#666;">Mau kerjakan apa hari ini?</p>
+        </header>
+
+        <div class="menu-grid">
+            <div class="menu-card" onclick="Router.to('calculator')">
+                <div class="icon">🧮</div>
+                <h4>Hitung Order</h4>
+                <p>Estimasi Gordyn & Invoice</p>
+            </div>
+
+            <div class="menu-card" onclick="Router.to('catalog')">
+                <div class="icon">📚</div>
+                <h4>Katalog Bahan</h4>
+                <p>Cek Harga & Stok</p>
+            </div>
+
+            <div class="menu-card" onclick="Router.to('history')">
+                <div class="icon">🕒</div>
+                <h4>Riwayat</h4>
+                <p>Data Transaksi</p>
+            </div>
+            
+            <div class="menu-card logout" onclick="Auth.logout()">
+                <div class="icon">🔒</div>
+                <h4>Keluar</h4>
+            </div>
+        </div>
+    </section>
+
+    <section id="view-calculator" class="view" style="display: none;">
+        <div class="nav-bar">
+            <button class="btn-back" onclick="Router.to('dashboard')">⬅ Menu</button>
+            <div style="flex:1; text-align:center; font-weight:bold;">Kalkulator</div>
+            <button onclick="Calculator.bersihkanSemua()" style="width:auto; background:var(--danger); font-size:12px; padding:5px 10px;">Reset</button>
+        </div>
+
+        <div class="content-container">
+            <div class="card">
+                <h3>👤 Data Pelanggan</h3>
+                <input type="text" id="namaPelanggan" placeholder="Nama Pelanggan (Wajib)">
+                <input type="text" id="noHp" placeholder="No WhatsApp / Alamat">
+            </div>
+
+            <div class="card">
+                <h3>🪟 Tambah Jendela / Item</h3>
+                
+                <label>Nama Ruang / Lokasi:</label>
+                <input type="text" id="namaJendela" placeholder="Contoh: Jendela Kamar Utama">
+                
+                <div class="row">
+                    <div class="input-group">
+                        <label>Lebar (m)</label>
+                        <input type="number" id="lebarJendela" placeholder="L" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>Tinggi (m)</label>
+                        <input type="number" id="tinggiJendela" placeholder="T" step="0.01">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-group">
+                        <label>Rasio Bahan (x)</label>
+                        <input type="number" id="rasioBahan" value="2.5" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Harga Kain /m</label>
+                        <input type="text" id="hargaKain" placeholder="Rp" 
+                            onkeyup="this.value = CONFIG.formatInputUang(this.value)">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 10px;">
+                    <label>Pilih Rel:</label>
+                    <select id="pilihRel">
+                        <option value="0-Tidak Pakai">Loading Data...</option>
+                    </select>
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <label>Pilih Ring / Aksesoris:</label>
+                    <select id="pilihRing">
+                        <option value="0-Tidak Pakai">Loading Data...</option>
+                    </select>
+                </div>
+
+                <div style="margin-top: 15px; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px dashed #ccc;">
+                    <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:bold; color:#333;">
+                        <input type="checkbox" id="cekVitrace" onchange="Calculator.toggleVitrace()"> 
+                        + Tambah Lapisan Vitrace?
+                    </label>
+
+                    <div id="formVitrace" style="display:none; margin-top:10px;">
+                        <div class="row">
+                            <div class="input-group">
+                                <label>Harga Vitrace /m</label>
+                                <input type="text" id="hargaVitrace" placeholder="Rp" 
+                                    onkeyup="this.value = CONFIG.formatInputUang(this.value)">
+                            </div>
+                            <div class="input-group">
+                                <label>Rasio Vitrace</label>
+                                <input type="number" id="rasioVitrace" value="2.5">
+                            </div>
+                        </div>
+                        
+                        <label>Pilih Rel Vitrace:</label>
+                        <select id="pilihRelVitrace">
+                            <option value="0-Tidak Pakai">Loading...</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <details style="margin-top:15px; border:1px solid #eee; padding:10px; border-radius:5px;">
+                    <summary style="cursor:pointer; color:#007bff;">⚙️ Edit Manual Jumlah (Opsional)</summary>
+                    <div class="row" style="margin-top:10px;">
+                         <div class="input-group">
+                            <label>Jml Ring (Pcs)</label>
+                            <input type="number" id="manualRing" placeholder="Auto">
+                         </div>
+                         <div class="input-group">
+                            <label>Pjg Rel (m)</label>
+                            <input type="number" id="manualRel" placeholder="Auto" step="0.01">
+                         </div>
+                    </div>
+                </details>
+
+                <button id="btn-action-item" class="btn-add" onclick="tambahItem()" style="margin-top: 15px;">
+                    + Tambah Jendela Lain
+                </button>
+            </div>
+
+            <div class="card">
+                <h3>🛒 Daftar Pesanan</h3>
+                <ul id="list-keranjang" style="padding-left:0; list-style:none;">
+                    <li style="color: #999; text-align:center; font-style:italic; padding:10px;">Belum ada item masuk...</li>
+                </ul>
+                <div class="total-box">
+                    <span>Total Estimasi:</span>
+                    <span id="grand-total" style="color:#28a745;">Rp 0</span>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button onclick="generateInvoice('CUSTOMER')" class="btn-print">📄 Download Invoice Customer</button>
+                <button onclick="generateInvoice('OWNER')" class="btn-print-owner">🛠 Download Invoice Owner</button>
+                <button onclick="simpanKeDatabase()" class="btn-save">💾 Simpan ke Database</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="view-catalog" class="view" style="display: none;">
+        <div class="nav-bar">
+            <button class="btn-back" onclick="Router.to('dashboard')">⬅ Menu Utama</button>
+            <h3>Katalog & Harga Bahan</h3>
+        </div>
+        <div id="catalog-container" class="catalog-grid">
+            <p style="text-align:center; padding:20px;">Memuat data...</p>
+        </div>
+    </section>
+
+    <section id="view-history" class="view" style="display: none;">
+        <div class="nav-bar">
+            <button class="btn-back" onclick="Router.to('dashboard')">⬅ Menu Utama</button>
+            <h3>Riwayat Transaksi</h3>
+        </div>
+        
+        <div id="history-container" class="history-list">
+        </div>
+    </section>
+
+    <div id="invoice-area" style="display: none;"></div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/catalog.js"></script>
+    <script src="js/calculator.js"></script>
+    <script src="js/history.js"></script>
+
+    <script>
+        // Memanggil Fungsi dari Module Calculator.js
+        function generateInvoice(tipe) {
+            Calculator.generateInvoice(tipe);
+        }
+        
+        function tambahItem() {
+            Calculator.tambahItem();
+        }
+        
+        // Memanggil Fungsi Simpan (Bridge antara UI dan API)
+        function simpanKeDatabase() {
+            if(API.state.keranjang.length === 0) return alert("Keranjang masih kosong!");
+            
+            const nama = document.getElementById('namaPelanggan').value || "Pelanggan";
+            let total = 0;
+            API.state.keranjang.forEach(i => total += i.subTotal);
+
+            if(!confirm(`Simpan transaksi atas nama ${nama} senilai ${CONFIG.formatRupiah(total)}?`)) return;
+
+            const btn = document.querySelector('.btn-save');
+            const txtAsli = btn.innerText;
+            btn.innerText = "⏳ Menyimpan...";
+            btn.disabled = true;
+
+            API.simpanTransaksi({
+                idTransaksi: API.state.currentId || null, // Kirim ID kalau edit, null kalau baru
+                namaPelanggan: nama,
+                totalGrand: total,
+                items: API.state.keranjang
+            }).then(res => {
+                btn.innerText = txtAsli;
+                btn.disabled = false;
+
+                if(res.status === 'success') {
+                    alert(res.message);
+                    
+                    // --- INI BAGIAN PENTINGNYA ---
+                    // Update State Lokal dengan Data Balikan Server
+                    API.state.currentRow = res.noBaris;     // Biar Invoice muncul angka #10
+                    API.state.currentId = res.idTransaksi;  // Biar Invoice muncul TRX-123
+                    
+                } else {
+                    alert("❌ Gagal menyimpan: " + res.message);
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

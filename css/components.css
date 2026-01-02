@@ -1,0 +1,270 @@
+/* --- KARTU (CARD) --- */
+.card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.card h3 {
+    margin-top: 0;
+    font-size: 1rem;
+    color: var(--primary);
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 8px;
+    display: inline-block;
+}
+
+/* --- FORM INPUT --- */
+input[type="text"],
+input[type="password"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 16px; /* Font 16px mencegah zoom otomatis di iPhone */
+    background: #fff;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+/* Layout Input Berjejer (Row) */
+.row {
+    display: flex;
+    gap: 15px;
+}
+.input-group {
+    flex: 1; /* Membagi lebar sama rata */
+}
+
+/* --- TOMBOL (BUTTONS) --- */
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+button:active {
+    transform: scale(0.98); /* Efek membal saat ditekan */
+}
+
+/* Warna-warni Tombol */
+.btn-add { background-color: var(--success); color: white; }
+.btn-print { background-color: var(--primary); color: white; margin-bottom: 8px; }
+.btn-print-owner { background-color: var(--gray); color: white; margin-bottom: 8px; }
+.btn-save { background-color: #17a2b8; color: white; }
+.btn-back { background-color: transparent; color: var(--gray); width: auto; padding: 5px 10px; margin: 0; }
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* --- LOGIN PAGE KHUSUS --- */
+#view-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.login-box {
+    width: 100%;
+    text-align: center;
+    padding: 40px 30px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.login-box input {
+    text-align: center;
+    letter-spacing: 5px; /* Biar PIN terlihat berjarak */
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.login-box button {
+    background: var(--primary);
+    color: white;
+    margin-top: 10px;
+}
+
+/* --- DASHBOARD MENU GRID --- */
+.menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 Kolom */
+    gap: 15px;
+}
+
+.menu-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.menu-card:active {
+    transform: scale(0.95);
+    background: #f8f9fa;
+}
+
+.menu-card .icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.menu-card h4 {
+    margin: 5px 0;
+    color: var(--dark);
+}
+
+.menu-card p {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin: 0;
+}
+
+.menu-card.logout {
+    grid-column: span 2; /* Tombol logout melebar penuh */
+    background-color: #fff5f5;
+    border: 1px solid #ffebeb;
+}
+.menu-card.logout h4 { color: var(--danger); }
+
+/* --- KERANJANG BELANJA & KATALOG --- */
+#list-keranjang li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px dashed #ddd;
+}
+
+.total-box {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* Katalog Grid */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Responsif otomatis */
+    gap: 15px;
+}
+
+.catalog-card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+.catalog-card .price {
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+    color: var(--success);
+}
+/* --- RIWAYAT TRANSAKSI --- */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.history-card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    border-left: 5px solid var(--primary); /* Aksen warna di kiri */
+}
+
+.hist-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-bottom: 5px;
+}
+
+.hist-total {
+    font-weight: bold;
+    color: var(--success);
+}
+
+.hist-name {
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+    color: var(--dark);
+}
+
+.hist-detail {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #333;
+    line-height: 1.5;
+    font-family: monospace;
+    white-space: pre-wrap;
+    
+    /* INI KUNCINYA: Batasi tinggi & Scroll */
+    max-height: 150px;       /* Tinggi maksimal kotak */
+    overflow-y: auto;        /* Muncul scroll jika kepanjangan */
+    border: 1px solid #eee;  /* Batas tepi biar jelas */
+}
+
+/* Tombol Pagination (Halaman) */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+.pagination-container button {
+    width: auto;
+    padding: 8px 15px;
+    background: var(--primary);
+    color: white;
+}
+.pagination-container button:disabled {
+    background: #ccc;
+}
