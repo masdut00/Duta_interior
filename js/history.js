@@ -54,8 +54,8 @@ const History = {
                     </button>
                     
                     <button onclick="History.cetakInvoiceServer('${trx.id}')" 
-                            style="flex:1; background:#17a2b8; color:white; font-size:13px;">
-                        🖨️ Invoice
+                            style="flex:1; background:#007bff; color:white; border:none; padding:8px; border-radius:4px; font-weight:bold; cursor:pointer;">
+                        🖨️ Cetak Invoice
                     </button>
                 </div>
             `;

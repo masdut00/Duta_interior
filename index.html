@@ -65,7 +65,6 @@
         <div class="nav-bar">
             <button class="btn-back" onclick="Router.to('dashboard')">⬅ Menu</button>
             <div style="flex:1; text-align:center; font-weight:bold;">Kalkulator</div>
-            <button onclick="Calculator.bersihkanSemua()" style="width:auto; background:var(--danger); font-size:12px; padding:5px 10px;">Reset</button>
         </div>
 
         <div class="content-container">
@@ -175,8 +174,8 @@
             </div>
 
             <div class="action-buttons">
-                <button onclick="generateInvoice('CUSTOMER')" class="btn-print">📄 Download Invoice Customer</button>
-                <button onclick="generateInvoice('OWNER')" class="btn-print-owner">🛠 Download Invoice Owner</button>
+                <!-- <button onclick="generateInvoice('CUSTOMER')" class="btn-print">📄 Download Invoice Customer</button>
+                <button onclick="generateInvoice('OWNER')" class="btn-print-owner">🛠 Download Invoice Owner</button> -->
                 <button onclick="simpanKeDatabase()" class="btn-save">💾 Simpan ke Database</button>
             </div>
         </div>
@@ -229,6 +228,7 @@
             let total = 0;
             API.state.keranjang.forEach(i => total += i.subTotal);
 
+            // Konfirmasi Simpan
             if(!confirm(`Simpan transaksi atas nama ${nama} senilai ${CONFIG.formatRupiah(total)}?`)) return;
 
             const btn = document.querySelector('.btn-save');
@@ -237,7 +237,7 @@
             btn.disabled = true;
 
             API.simpanTransaksi({
-                idTransaksi: API.state.currentId || null, // Kirim ID kalau edit, null kalau baru
+                idTransaksi: API.state.currentId || null, 
                 namaPelanggan: nama,
                 totalGrand: total,
                 items: API.state.keranjang
@@ -246,12 +246,21 @@
                 btn.disabled = false;
 
                 if(res.status === 'success') {
-                    alert(res.message);
+                    alert("✅ SUKSES! " + res.message);
                     
-                    // --- INI BAGIAN PENTINGNYA ---
-                    // Update State Lokal dengan Data Balikan Server
-                    API.state.currentRow = res.noBaris;     // Biar Invoice muncul angka #10
-                    API.state.currentId = res.idTransaksi;  // Biar Invoice muncul TRX-123
+                    // --- BAGIAN BARU: AUTO RESET (BERSIH-BERSIH) ---
+                    // Supaya layar langsung bersih dan siap untuk klien berikutnya
+                    
+                    API.state.keranjang = [];           // 1. Kosongkan memori keranjang
+                    API.state.currentId = null;         // 2. Lupakan ID lama (biar jadi baru lagi)
+                    API.state.currentRow = null;        // 3. Lupakan No Invoice lama
+                    
+                    document.getElementById('namaPelanggan').value = ""; // 4. Hapus nama
+                    Calculator.renderKeranjang();       // 5. Hapus tabel di layar
+                    Calculator.resetForm();             // 6. Nol-kan inputan L & T
+                    
+                    // Opsional: Scroll ke paling atas
+                    window.scrollTo(0, 0);
                     
                 } else {
                     alert("❌ Gagal menyimpan: " + res.message);
