@@ -18,28 +18,32 @@
 
         <div class="content-container" style="padding-bottom: 80px;">
             
-            <div class="sticky-settings">
-                <h4>🛠️ Pengaturan Default (Otomatis Isi)</h4>
+            <div class="card">
+                <h3>🛠️ Pengaturan Default</h3>
+                <p style="font-size:11px; color:#666; margin-top:-10px; margin-bottom:15px;">
+                    Isi ini agar form otomatis terisi saat tambah jendela.
+                </p>
                 
-                <div style="display:flex; gap:10px; margin-bottom:5px;">
-                    <div class="settings-item" style="flex:1;">
+                <div style="display:flex; gap:15px; margin-bottom:10px;">
+                    <div style="flex:1;">
                         <label>Harga Kain/m</label>
-                        <input type="text" id="globalHargaKain" placeholder="0" onkeyup="this.value=CONFIG.formatInputUang(this.value)">
+                        <input type="text" id="globalHargaKain" placeholder="0" onkeyup="this.value=CONFIG.formatInputUang(this.value)" style="margin-bottom:0;">
                     </div>
-                    <div class="settings-item" style="flex:1;">
+                    <div style="flex:1;">
                         <label>Rel Gordyn</label>
-                        <select id="globalRel"></select>
+                        <select id="globalRel" style="margin-bottom:0;"></select>
                     </div>
                 </div>
 
-                <div style="display:flex; gap:10px;">
-                    <div class="settings-item" style="flex:1;">
+                <div style="display:flex; gap:15px;">
+                    <div style="flex:1;">
                         <label>Harga Vitrace/m</label>
-                        <input type="text" id="globalHargaVit" placeholder="0" onkeyup="this.value=CONFIG.formatInputUang(this.value)">
+                        <input type="text" id="globalHargaVit" placeholder="0" onkeyup="this.value=CONFIG.formatInputUang(this.value)" style="margin-bottom:0;">
                     </div>
-                    <div class="settings-item" style="flex:1;">
+                    <div style="flex:1;">
                         <label>Rel Vitrace</label>
-                        <select id="globalRelVit"></select> </div>
+                        <select id="globalRelVit" style="margin-bottom:0;"></select>
+                    </div>
                 </div>
             </div>
 
