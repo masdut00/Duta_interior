@@ -177,7 +177,7 @@ button:disabled {
 
 .login-box input {
     text-align: center;
-    letter-spacing: 5px;
+    /* letter-spacing: 5px; */
     font-size: 24px;
     font-weight: bold;
     border: 2px solid #eee;
