@@ -14,31 +14,41 @@
                 <h3>Halo, Duta! 👋</h3>
                 <small class="status-badge" style="background:#e8f5e9; color:green;">Online</small>
             </div>
-            <p style="margin-top:0; color:#666;">Mau kerjakan apa hari ini?</p>
+            <p style="margin-top:0; color:#666;">Ringkasan Bulan Ini:</p>
         </header>
 
+        <div class="stats-grid">
+            <div class="stats-card">
+                <h5>Omset Deal</h5>
+                <div class="value" id="stat-omset">Rp 0</div>
+            </div>
+            <div class="stats-card">
+                <h5>Uang Masuk</h5>
+                <div class="value" id="stat-cash" style="color:var(--success);">Rp 0</div>
+            </div>
+            <div class="stats-card">
+                <h5>Piutang</h5>
+                <div class="value" id="stat-piutang" style="color:var(--danger);">Rp 0</div>
+            </div>
+        </div>
+
         <div class="menu-grid">
-            <a href="survey.html" class="menu-card" style="text-decoration:none; color:inherit;">
-                <div class="icon">📝</div> <h4>Survey Lapangan</h4>
-                <p>Catat Ukuran Cepat</p>
-            </a>
-            
             <a href="calculator.html" class="menu-card" style="text-decoration:none; color:inherit;">
                 <div class="icon">🧮</div>
                 <h4>Hitung Order</h4>
-                <p>Estimasi Gordyn & Invoice</p>
+                <p>Estimasi & Invoice</p>
+            </a>
+            
+            <a href="history.html" class="menu-card" style="text-decoration:none; color:inherit;">
+                <div class="icon">🕒</div>
+                <h4>Riwayat & Tagihan</h4>
+                <p>Cek Pembayaran</p>
             </a>
             
             <a href="catalog.html" class="menu-card" style="text-decoration:none; color:inherit;">
                 <div class="icon">📚</div>
                 <h4>Katalog Bahan</h4>
                 <p>Cek Harga & Stok</p>
-            </a>
-            
-            <a href="history.html" class="menu-card" style="text-decoration:none; color:inherit;">
-                <div class="icon">🕒</div>
-                <h4>Riwayat</h4>
-                <p>Data Transaksi</p>
             </a>
             
             <div class="menu-card logout" onclick="CONFIG.logout()">
@@ -49,8 +59,35 @@
     </section>
 
     <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
     <script>
-        CONFIG.checkAuth(); // Cek Login
+        CONFIG.checkAuth();
+        
+        // Script Sederhana Hitung Omset (Looping data riwayat)
+        window.onload = async function() {
+            try {
+                const res = await API.ambilRiwayat();
+                if(res.status === 'success') {
+                    let omset = 0;
+                    let cash = 0;
+                    let piutang = 0;
+
+                    res.data.forEach(trx => {
+                        // Hanya hitung data bulan ini (Opsional, saat ini kita hitung semua dulu)
+                        omset += parseInt(trx.total || 0);
+                        cash += parseInt(trx.dp || 0); // Asumsi kolom DP sudah ada
+                        // Jika status LUNAS, berarti cash = total
+                        if(trx.statusBayar === 'LUNAS') cash = parseInt(trx.total);
+                    });
+                    
+                    piutang = omset - cash;
+
+                    document.getElementById('stat-omset').innerText = CONFIG.formatRupiah(omset);
+                    document.getElementById('stat-cash').innerText = CONFIG.formatRupiah(cash);
+                    document.getElementById('stat-piutang').innerText = CONFIG.formatRupiah(piutang);
+                }
+            } catch(e) { console.log("Gagal muat stats"); }
+        }
     </script>
 </body>
 </html>

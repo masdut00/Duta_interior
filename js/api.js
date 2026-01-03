@@ -110,14 +110,30 @@ const API = {
 
     // 3. SIMPAN TRANSAKSI
     simpanTransaksi: async function(dataTransaksi) {
+        // Siapkan logika status otomatis
+        const total = dataTransaksi.totalGrand || 0;
+        const dp = dataTransaksi.dp || 0;
+        let status = "BELUM LUNAS";
+        
+        // Logika sederhana: Jika DP >= Total, berarti Lunas. Jika DP 0, Belum.
+        // Nanti bisa kita perhalus lagi.
+        if (dp >= total) status = "LUNAS";
+        else if (dp > 0) status = "DP / CICIL";
+
         const payload = {
             action: "simpanTransaksi",
             id: dataTransaksi.idTransaksi,
             tanggal: CONFIG.getTodayDate(),
             nama: dataTransaksi.namaPelanggan,
-            hp: dataTransaksi.hpPelanggan, // <--- TAMBAHAN PENTING INI
-            total: dataTransaksi.totalGrand,
-            items: JSON.stringify(dataTransaksi.items)
+            hp: dataTransaksi.hpPelanggan,
+            total: total,
+            items: JSON.stringify(dataTransaksi.items),
+            
+            // --- DATA BARU ---
+            dp: dp,
+            statusBayar: status,
+            deadline: dataTransaksi.deadline || "-", // Tanggal Pasang
+            statusKerja: "ANTRIAN" // Default status kerja saat baru masuk
         };
 
         const response = await fetch(CONFIG.API_URL, {

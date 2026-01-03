@@ -17,11 +17,34 @@
         </div>
 
         <div class="content-container" style="padding-bottom: 80px;">
+            
+            <div class="sticky-settings">
+                <h4>🛠️ Pengaturan Default (Otomatis Isi)</h4>
+                
+                <div style="display:flex; gap:10px; margin-bottom:5px;">
+                    <div class="settings-item" style="flex:1;">
+                        <label>Harga Kain/m</label>
+                        <input type="text" id="globalHargaKain" placeholder="0" onkeyup="this.value=CONFIG.formatInputUang(this.value)">
+                    </div>
+                    <div class="settings-item" style="flex:1;">
+                        <label>Rel Gordyn</label>
+                        <select id="globalRel"></select>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <div class="settings-item" style="flex:1;">
+                        <label>Harga Vitrace/m</label>
+                        <input type="text" id="globalHargaVit" placeholder="0" onkeyup="this.value=CONFIG.formatInputUang(this.value)">
+                    </div>
+                    <div class="settings-item" style="flex:1;">
+                        <label>Rel Vitrace</label>
+                        <select id="globalRelVit"></select> </div>
+                </div>
+            </div>
+
             <div class="card">
                 <h3>👤 Data Pelanggan</h3>
-                <button onclick="Calculator.bukaModalSurvey()" style="width:100%; background:#17a2b8; color:white; border:none; padding:10px; border-radius:4px; margin-bottom:15px; cursor:pointer; font-weight:bold;">
-                    📂 Ambil Data dari Survey
-                </button>
                 <input type="text" id="namaPelanggan" placeholder="Nama Pelanggan (Wajib)">
                 <input type="text" id="noHp" placeholder="No WhatsApp / Alamat">
             </div>
@@ -29,20 +52,23 @@
             <div class="card">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                     <h3>🪟 Daftar Item</h3>
-                    <small style="color:#666;">Klik item untuk edit</small>
-                </div>
+                    </div>
                 
-                <ul id="list-keranjang" style="padding-left:0; list-style:none;">
-                    </ul>
+                <ul id="list-keranjang" style="padding-left:0; list-style:none;"></ul>
                 
                 <div class="total-box">
-                    <span>Total Estimasi:</span> 
-                    <span id="grand-total" style="color:#28a745;">Rp 0</span>
+                    <span>Total Project:</span> 
+                    <span id="grand-total" style="color:#28a745; font-size:1.2rem;">Rp 0</span>
+                </div>
+
+                <div class="checkout-area">
+                    <label>💰 Uang Muka (DP)</label>
+                    <input type="text" id="inputDP" placeholder="Rp 0" onkeyup="this.value=CONFIG.formatInputUang(this.value)">
                 </div>
             </div>
 
             <div class="action-buttons">
-                <button onclick="Calculator.simpanDatabase()" class="btn-save" style="width: 100%;">💾 Simpan Transaksi (Invoice)</button>
+                <button onclick="Calculator.simpanDatabase()" class="btn-save" style="width: 100%;">💾 Simpan Transaksi</button>
             </div>
         </div>
 
@@ -57,29 +83,19 @@
             </div>
             
             <div class="modal-body">
-                <label>Nama Ruang / Lokasi:</label>
-                <input type="text" id="namaJendela" placeholder="Contoh: Jendela Kamar Utama">
+                <label>Nama Ruang / Jendela:</label>
+                <input type="text" id="namaJendela" placeholder="Contoh: Kamar Depan">
                 
                 <div class="row">
-                    <div class="input-group"><label>Lebar (m)</label><input type="number" id="lebarJendela" step="0.01"></div>
-                    <div class="input-group"><label>Tinggi (m)</label><input type="number" id="tinggiJendela" step="0.01"></div>
+                    <div class="input-group"><label>Lebar (CM)</label><input type="number" id="lebarJendela" placeholder="L"></div>
+                    <div class="input-group"><label>Tinggi (CM)</label><input type="number" id="tinggiJendela" placeholder="T"></div>
                 </div>
 
-                <div style="margin: 15px 0; background: #fff; border:1px solid #eee; padding: 15px; border-radius: 8px;">
-                    <label style="font-weight: bold; display:block; margin-bottom:10px; color:#333;">Mau Hitung Apa?</label>
+                <div style="margin: 15px 0; background: #fff; border:1px solid #eee; padding: 10px; border-radius: 8px;">
                     <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="modeModel" value="FULL" checked onchange="Calculator.toggleMode()">
-                            <span>Lengkap</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="modeModel" value="GORDYN" onchange="Calculator.toggleMode()">
-                            <span>Gordyn</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="modeModel" value="VITRACE" onchange="Calculator.toggleMode()">
-                            <span>Vitrace</span>
-                        </label>
+                        <label class="radio-option"><input type="radio" name="modeModel" value="FULL" checked onchange="Calculator.toggleMode()"><span>Full Set</span></label>
+                        <label class="radio-option"><input type="radio" name="modeModel" value="GORDYN" onchange="Calculator.toggleMode()"><span>Gordyn</span></label>
+                        <label class="radio-option"><input type="radio" name="modeModel" value="VITRACE" onchange="Calculator.toggleMode()"><span>Vitrace</span></label>
                     </div>
                 </div>
 
@@ -89,8 +105,8 @@
                         <div class="input-group"><label>Rasio (x)</label><input type="number" id="rasioBahan" value="2.5" step="0.1"></div>
                         <div class="input-group"><label>Harga Kain</label><input type="text" id="hargaKain" placeholder="Rp" onkeyup="this.value = CONFIG.formatInputUang(this.value)"></div>
                     </div>
-                    <div style="margin-top: 10px;"><label>Rel:</label><select id="pilihRel"><option value="0-Tidak Pakai">Loading...</option></select></div>
-                    <div style="margin-top: 10px;"><label>Ring:</label><select id="pilihRing"><option value="0-Tidak Pakai">Loading...</option></select></div>
+                    <div style="margin-top: 10px;"><label>Rel:</label><select id="pilihRel"></select></div>
+                    <div style="margin-top: 10px;"><label>Ring:</label><select id="pilihRing"></select></div>
                 </div>
 
                 <div id="areaVitrace" style="border:1px solid #eee; padding:15px; border-radius:10px; margin-bottom:15px; background:white;">
@@ -99,27 +115,15 @@
                         <div class="input-group"><label>Rasio (x)</label><input type="number" id="rasioVitrace" value="2.5" step="0.1"></div>
                         <div class="input-group"><label>Harga Vitrace</label><input type="text" id="hargaVitrace" placeholder="Rp" onkeyup="this.value = CONFIG.formatInputUang(this.value)"></div>
                     </div>
-                    <div style="margin-top: 10px;"><label>Rel Vit:</label><select id="pilihRelVitrace"><option value="0-Tidak Pakai">Loading...</option></select></div>
-                    <div style="margin-top: 10px;"><label>Ring Vit:</label><select id="pilihRingVitrace"><option value="0-Tidak Pakai">Tidak Pakai</option></select></div>
+                    <div style="margin-top: 10px;"><label>Rel Vit:</label><select id="pilihRelVitrace"></select></div>
+                    <div style="margin-top: 10px;"><label>Ring Vit:</label><select id="pilihRingVitrace"></select></div>
                 </div>
 
-                <button id="btn-action-item" class="btn-add" onclick="Calculator.tambahItem()" style="margin-top: 10px; padding: 16px; font-size: 1.1rem;">
-                    ✅ Simpan Item Ini
+                <button id="btn-action-item" class="btn-add" onclick="Calculator.tambahItem()" style="margin-top: 10px; padding: 16px;">
+                    ✅ Simpan Item
                 </button>
-                <button onclick="Calculator.tutupForm()" style="background:transparent; color:#666; margin-top:10px; border:1px solid #ddd;">
-                    Batal
-                </button>
-                <div style="height:50px;"></div> </div>
-        </div>
-    </div>
-
-    <div id="modalSurvey" class="modal">
-        <div class="modal-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3>Pilih Data Survey</h3>
-                <button onclick="document.getElementById('modalSurvey').style.display='none'" style="background:none; border:none; font-size:20px;">✕</button>
+                <div style="height:50px;"></div> 
             </div>
-            <div id="list-survey-container">Memuat data...</div>
         </div>
     </div>
 
@@ -127,30 +131,29 @@
 
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
-    <script src="js/catalog.js"></script>
     <script src="js/calculator.js"></script>
 
     <script>
         CONFIG.checkAuth(); 
         window.onload = async function() {
             await API.ambilHarga(); 
+            // Inisialisasi Global Settings di JS
+            Calculator.initGlobalSettings();
             
-            // Cek Edit Data dari History
+            // Cek Edit (Code lama tetap jalan)
             const editData = localStorage.getItem('edit_trx_data');
             if (editData) {
                 try {
                     const items = JSON.parse(decodeURIComponent(editData));
                     API.state.keranjang = items;
                     API.state.currentId = localStorage.getItem('edit_trx_id');
-                    
-                    // --- UPDATE BAGIAN INI: ---
                     document.getElementById('namaPelanggan').value = localStorage.getItem('edit_trx_nama');
-                    document.getElementById('noHp').value = localStorage.getItem('edit_trx_hp') || ""; // Load HP
-                    // --------------------------
-
+                    document.getElementById('noHp').value = localStorage.getItem('edit_trx_hp') || "";
+                    
+                    // LOAD JUGA DP & DEADLINE (Jika ada di data edit nanti)
                     Calculator.renderKeranjang();
                     
-                    // Bersihkan memori
+                    // Bersihkan Memory
                     localStorage.removeItem('edit_trx_data');
                     localStorage.removeItem('edit_trx_id');
                     localStorage.removeItem('edit_trx_nama');

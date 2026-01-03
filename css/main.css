@@ -115,3 +115,54 @@ body.printing #invoice-area {
     padding: 0 !important;
     margin: 0 !important;
 }
+
+/* --- TAMBAHAN BARU (Fase Upgrade) --- */
+
+/* 1. Sticky Settings di Kalkulator */
+.sticky-settings {
+    background: #fff;
+    padding: 10px 15px;
+    border-bottom: 2px solid #eee;
+    margin: 0 -20px 15px -20px; /* Melebar ke pinggir */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.sticky-settings h4 { margin: 0 0 10px 0; font-size: 13px; color: var(--primary); }
+.settings-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+.settings-item { min-width: 120px; flex: 1; }
+.settings-item label { font-size: 10px; margin-bottom: 2px; }
+.settings-item input, .settings-item select { 
+    margin-bottom: 0; padding: 6px; font-size: 12px; height: 35px; 
+}
+
+/* 2. Statistik Dashboard */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.stats-card {
+    background: white;
+    padding: 15px 10px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid #f0f0f0;
+}
+.stats-card h5 { margin: 0; font-size: 11px; color: #888; text-transform: uppercase; }
+.stats-card .value { font-size: 14px; font-weight: bold; color: #333; margin-top: 5px; }
+
+/* 3. Input Date & DP di Kalkulator Bawah */
+.checkout-area {
+    background: #e3f2fd;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+.copy-btn {
+    background: #e9ecef; color: #333; border: 1px solid #ccc;
+    padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer;
+}
