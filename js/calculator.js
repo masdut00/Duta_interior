@@ -260,7 +260,15 @@ const Calculator = {
         try {
             const res = await API.ambilRiwayat();
             if(res.status === 'success') {
-                const dataSurvey = res.data.filter(item => item.nama.includes("[SURVEY]"));
+                
+                // --- BAGIAN PERBAIKAN ---
+                // Filter hanya yang namanya mengandung kata [SURVEY]
+                // Kita tambahkan pengaman: (item.nama || "") agar kalau kosong tidak error
+                const dataSurvey = res.data.filter(item => {
+                    const rawName = item.nama ? item.nama.toString() : "";
+                    return rawName.includes("[SURVEY]");
+                });
+                // ------------------------
 
                 if(dataSurvey.length === 0) {
                     container.innerHTML = `
@@ -276,13 +284,20 @@ const Calculator = {
                 
                 dataSurvey.forEach(item => {
                     const rawJson = encodeURIComponent(item.itemsJSON);
-                    const namaClean = item.nama.replace("[SURVEY] ", "").trim();
-                    const hp = item.hp || ""; // Ambil HP
+                    
+                    // Bersihkan nama dari tag [SURVEY]
+                    // Pakai pengaman .toString() lagi biar aman
+                    const rawName = item.nama ? item.nama.toString() : "";
+                    const namaClean = rawName.replace("[SURVEY]", "").trim() || "Tanpa Nama";
+                    
+                    const hp = item.hp || ""; 
 
                     let itemCount = "Detail Item";
-                    try { const parsed = JSON.parse(item.itemsJSON); itemCount = parsed.length + " Jendela"; } catch(e) {}
+                    try { 
+                        const parsed = JSON.parse(item.itemsJSON); 
+                        itemCount = parsed.length + " Jendela"; 
+                    } catch(e) {}
 
-                    // PASS HP KE FUNGSI MUAT SURVEY
                     html += `
                         <div class="survey-card" onclick="Calculator.muatSurvey('${item.id}', '${namaClean}', '${rawJson}', '${hp}')">
                             <div class="survey-icon-box">📝</div>
