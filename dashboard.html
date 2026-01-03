@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Duta Decor</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <section class="view active">
+        <header>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3>Halo, Duta! 👋</h3>
+                <small class="status-badge" style="background:#e8f5e9; color:green;">Online</small>
+            </div>
+            <p style="margin-top:0; color:#666;">Mau kerjakan apa hari ini?</p>
+        </header>
+
+        <div class="menu-grid">
+            <a href="survey.html" class="menu-card" style="text-decoration:none; color:inherit;">
+                <div class="icon">📝</div> <h4>Survey Lapangan</h4>
+                <p>Catat Ukuran Cepat</p>
+            </a>
+            
+            <a href="calculator.html" class="menu-card" style="text-decoration:none; color:inherit;">
+                <div class="icon">🧮</div>
+                <h4>Hitung Order</h4>
+                <p>Estimasi Gordyn & Invoice</p>
+            </a>
+            
+            <a href="catalog.html" class="menu-card" style="text-decoration:none; color:inherit;">
+                <div class="icon">📚</div>
+                <h4>Katalog Bahan</h4>
+                <p>Cek Harga & Stok</p>
+            </a>
+            
+            <a href="history.html" class="menu-card" style="text-decoration:none; color:inherit;">
+                <div class="icon">🕒</div>
+                <h4>Riwayat</h4>
+                <p>Data Transaksi</p>
+            </a>
+            
+            <div class="menu-card logout" onclick="CONFIG.logout()">
+                <div class="icon">🔒</div>
+                <h4>Keluar</h4>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/config.js"></script>
+    <script>
+        CONFIG.checkAuth(); // Cek Login
+    </script>
+</body>
+</html>

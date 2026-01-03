@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Duta Decor</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <section class="view active" style="display:flex; align-items:center; justify-content:center; height:100vh;">
+        <div class="login-box" style="text-align:center;">
+            <img src="assets/logo.png" alt="Duta Decor" style="width: 80px; margin-bottom: 20px;">
+            <h2>Duta Decor System</h2>
+            <p style="color:#666; margin-bottom:20px;">Aplikasi Perhitungan Interior</p>
+            
+            <input type="password" id="pinInput" placeholder="Masukkan PIN Akses" style="margin-bottom:10px;">
+            <button onclick="prosesLogin()" style="width:100%;">Masuk Aplikasi</button>
+        </div>
+    </section>
+
+    <script src="js/config.js"></script>
+    <script>
+        // Cek Auth saat halaman dibuka
+        CONFIG.checkAuth(); 
+
+        function prosesLogin() {
+            const pin = document.getElementById('pinInput').value;
+            if(pin === CONFIG.PIN_ACCESS) {
+                CONFIG.loginSuccess(); // Pindah ke Dashboard
+            } else {
+                alert("PIN Salah! Coba '1234'");
+            }
+        }
+    </script>
+</body>
+</html>

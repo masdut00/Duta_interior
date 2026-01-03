@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog - Duta Decor</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        /* CSS Khusus Filter di Halaman Katalog */
+        .filter-box {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+        .search-bar {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .category-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            /* Sembunyikan scrollbar tapi tetap bisa scroll */
+            scrollbar-width: none; 
+        }
+        .category-scroll::-webkit-scrollbar { display: none; }
+        
+        .cat-btn {
+            background: #f1f3f5;
+            border: 1px solid transparent;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            white-space: nowrap;
+            cursor: pointer;
+            color: #555;
+            transition: all 0.2s;
+        }
+        .cat-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <section class="view active">
+        <div class="nav-bar">
+            <a href="dashboard.html" class="btn-back" style="text-decoration:none;">⬅ Menu</a>
+            <div style="flex:1; text-align:center; font-weight:bold;">Katalog & Stok</div>
+        </div>
+
+        <div class="content-container">
+            <div class="filter-box">
+                <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Cari nama barang..." onkeyup="Catalog.filterData()">
+                
+                <div class="category-scroll" id="categoryButtons">
+                    <button class="cat-btn active" onclick="Catalog.setCategory('Semua', this)">Semua</button>
+                    </div>
+            </div>
+
+            <div id="catalog-container" class="catalog-grid">
+                <p style="text-align:center; padding:20px; color:#666;">⏳ Sedang mengambil data...</p>
+            </div>
+
+            <div id="imageLightbox" class="lightbox" onclick="Catalog.tutupPreview()">
+                <button class="lightbox-close">&times;</button>
+                <img id="imgPreview" class="lightbox-img" src="" alt="Preview">
+            </div>
+        </div>
+    </section>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/catalog.js"></script>
+
+    <script>
+        CONFIG.checkAuth();
+        window.onload = async function() {
+            await API.ambilHarga();
+            Catalog.init(); // Inisialisasi Katalog
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Mode - Duta Decor</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        /* CSS Khusus Tombol Hapus Kecil */
+        .btn-del-mini {
+            background: transparent;
+            border: none;
+            color: #dc3545;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.1s;
+        }
+        .btn-del-mini:hover { transform: scale(1.2); color: red; }
+
+        /* CSS Tombol Tambah Baris Lebar */
+        .btn-add-row {
+            width: 100%;
+            background: #e9ecef; /* Abu-abu muda */
+            color: #333;
+            border: 2px dashed #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .btn-add-row:hover {
+            background: #dbe2ef;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <section class="view active">
+        <div class="nav-bar">
+            <a href="#" onclick="Survey.cekKeluar()" class="btn-back" style="text-decoration:none;">⬅ Menu</a>
+            <div style="flex:1; text-align:center; font-weight:bold;">Input Ukuran</div>
+        </div>
+
+        <div class="content-container">
+            <div class="card">
+                <h3>👤 Pelanggan</h3>
+                <input type="text" id="namaPelanggan" placeholder="Nama Pelanggan (Wajib)">
+                <input type="text" id="noHp" placeholder="No WA / Alamat (Opsional)">
+            </div>
+
+            <div class="card">
+                <h3>📏 Daftar Ukuran</h3>
+                
+                <table class="table-survey">
+                    <thead>
+                        <tr>
+                            <th>Ruang / Jendela</th>
+                            <th style="width:70px; text-align:center;">L (m)</th>
+                            <th style="width:70px; text-align:center;">T (m)</th>
+                            <th style="width:40px; text-align:center;">Hapus</th>
+                        </tr>
+                    </thead>
+                    <tbody id="survey-body">
+                        </tbody>
+                </table>
+
+                <button onclick="Survey.tambahBaris()" class="btn-add-row">
+                    + Tambah Baris Jendela
+                </button>
+            </div>
+
+            <div class="action-buttons">
+                <button id="btn-save-survey" onclick="Survey.simpanSurvey()" class="btn-save" style="width:100%; background:#6f42c1;">
+                    💾 Simpan Data Survey
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/survey.js"></script>
+
+    <script>
+        CONFIG.checkAuth();
+        window.onload = function() {
+            Survey.tambahBaris(); // Tambah 1 baris awal
+        };
+
+        window.onbeforeunload = function(e) {
+        
+            const nama = document.getElementById('namaPelanggan').value;
+            const adaIsi = nama.length > 0 || document.querySelectorAll('#survey-body tr').length > 0;
+
+            if (adaIsi && !Survey.isSaved) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            }
+        };
+    </script>
+</body>
+</html>

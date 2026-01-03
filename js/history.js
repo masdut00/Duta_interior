@@ -1,127 +1,200 @@
 const History = {
-    allData: [],      // Menyimpan semua data mentah dari server
-    currentPage: 1,   // Halaman aktif
-    itemsPerPage: 10, // Batas per halaman
+    state: {
+        dataAsli: [],      // Data mentah dari server
+        dataFiltered: [],  // Data hasil pencarian
+        currentPage: 1,    // Halaman saat ini
+        itemsPerPage: 10   // Batas item per halaman (Biar ringan)
+    },
 
-    render: async function() {
+    // 1. INISIALISASI
+    init: async function() {
         const container = document.getElementById('history-container');
-        container.innerHTML = '<p style="text-align:center; margin-top:20px;">Memuat data...</p>';
-
-        // Ambil data dari API
-        const response = await API.ambilRiwayat();
         
-        if (response.status === 'success' && response.data.length > 0) {
-            this.allData = response.data; // Simpan ke variable global object ini
-            this.currentPage = 1;         // Reset ke halaman 1
-            this.renderPage();            // Tampilkan halaman 1
-        } else {
-            container.innerHTML = '<div style="text-align:center; padding:30px; color:#999;">Belum ada riwayat.</div>';
+        try {
+            const res = await API.ambilRiwayat();
+            
+            if(res.status === 'success' && Array.isArray(res.data)) {
+                // Simpan data & Balik urutan (Terbaru diatas)
+                this.state.dataAsli = res.data.reverse(); 
+                this.state.dataFiltered = this.state.dataAsli; // Awalnya tampilkan semua
+                
+                // Render Halaman Pertama
+                this.renderManager(); 
+            } else {
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:red;">Gagal mengambil data riwayat.</div>`;
+            }
+
+        } catch (e) {
+            console.error(e);
+            container.innerHTML = `<div style="text-align:center; padding:20px; color:red;">Error koneksi: ${e.message}</div>`;
         }
     },
 
-    // FUNGSI RENDER HALAMAN TERTENTU
-    renderPage: function() {
-        const container = document.getElementById('history-container');
-        container.innerHTML = ""; // Bersihkan dulu
+    // 2. FITUR PENCARIAN & FILTER
+    filterData: function() {
+        const keyword = document.getElementById('searchHistory').value.toLowerCase();
         
-        // Logic Potong Array (Pagination)
-        const start = (this.currentPage - 1) * this.itemsPerPage;
-        const end = start + this.itemsPerPage;
-        const dataPage = this.allData.slice(start, end);
+        // Filter dari data asli
+        this.state.dataFiltered = this.state.dataAsli.filter(item => {
+            const nama = item.nama.toLowerCase();
+            const tgl = item.tanggal.toLowerCase();
+            return nama.includes(keyword) || tgl.includes(keyword);
+        });
 
-        // Render Card
-        dataPage.forEach(trx => {
-            const detailHtml = trx.ringkasan ? trx.ringkasan.replace(/\n/g, '<br>') : '-';
-            const rawData = encodeURIComponent(trx.itemsJSON);
+        // Reset ke Halaman 1 setiap kali mencari
+        this.state.currentPage = 1;
+        this.renderManager();
+    },
+
+    // 3. MANAGER HALAMAN (LOGIKA PAGINATION)
+    renderManager: function() {
+        // Hitung potong data dari index mana ke mana
+        const start = (this.state.currentPage - 1) * this.state.itemsPerPage;
+        const end = start + this.state.itemsPerPage;
+        
+        // Ambil potongan data (misal: data ke 1-10)
+        const dataPage = this.state.dataFiltered.slice(start, end);
+
+        // Render List & Tombol Navigasi
+        this.renderList(dataPage);
+        this.renderPaginationControls();
+    },
+
+    // 4. RENDER KARTU RIWAYAT
+    renderList: function(data) {
+        const container = document.getElementById('history-container');
+        container.innerHTML = "";
+
+        if(data.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center; padding:40px; color:#999; border:2px dashed #eee; border-radius:10px;">
+                    <div style="font-size:30px; margin-bottom:10px;">📂</div>
+                    Tidak ada riwayat ditemukan.
+                </div>`;
+            return;
+        }
+
+        data.forEach(item => {
+            // --- BAGIAN PERBAIKAN ---
+            // Kita paksa ubah nama jadi String (Teks), kalau kosong jadi teks kosong ""
+            const rawName = item.nama ? item.nama.toString() : ""; 
+            
+            const isSurvey = rawName.includes("[SURVEY]");
+            const namaDisplay = rawName.replace("[SURVEY]", "").trim() || "Tanpa Nama"; // Default jika kosong
+            // ------------------------
+
+            const badge = isSurvey 
+                ? `<span class="status-badge survey">📝 DRAFT SURVEY</span>` 
+                : `<span class="status-badge done">✅ INVOICE SELESAI</span>`;
+            
+            const hp = item.hp ? item.hp.toString() : ""; // Amanin HP juga
+
+            let ringkasanBarang = "-";
+            let safeJSON = "";
+            try {
+                const items = JSON.parse(item.itemsJSON);
+                const namaBarang = items.map(i => i.nama.split(' (')[0]); 
+                ringkasanBarang = namaBarang.slice(0, 2).join(", ");
+                if(items.length > 2) ringkasanBarang += `, +${items.length - 2} lainnya`;
+                
+                safeJSON = encodeURIComponent(item.itemsJSON);
+            } catch(e) { ringkasanBarang = "Detail error / Data Lama"; }
 
             const card = document.createElement('div');
-            card.className = 'history-card';
+            card.className = 'card';
+            card.style.borderLeft = isSurvey ? "5px solid #ffc107" : "5px solid #28a745";
+            
+            // Perhatikan: Kita pakai rawName untuk ID tombol edit/print agar aman
             card.innerHTML = `
-                <div class="hist-header">
-                    <span class="hist-date">${trx.tanggal}</span>
-                    <span class="hist-total">${trx.total}</span>
+                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px;">
+                    <div>
+                        <div style="font-size:12px; color:#999; margin-bottom:4px;">${item.tanggal}</div>
+                        <h3 style="margin:0; font-size:16px; border:none; padding:0;">${namaDisplay}</h3>
+                        ${hp ? `<div style="font-size:12px; color:#666; margin-top:2px;">📞 ${hp}</div>` : ''}
+                    </div>
+                    ${badge}
                 </div>
-                <h4 class="hist-name">${trx.nama}</h4>
-                
-                <div class="hist-detail">
-                    ${detailHtml}
+                <div style="background:#f8f9fa; padding:10px; border-radius:8px; font-size:13px; color:#555; margin-bottom:10px;">
+                    📦 <strong>Item:</strong> ${ringkasanBarang}
                 </div>
-                
-                <div style="margin-top:10px; display:flex; gap:10px;">
-                    <button onclick="History.editTransaksi('${trx.id}', '${trx.nama}', '${rawData}')" 
-                            style="flex:1; background:#ffc107; color:black; font-size:13px;">
-                        ✏️ Edit
+                <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; font-size:16px; color:#333;">
+                    <span>Total:</span>
+                    <span>${CONFIG.formatRupiah(item.total)}</span>
+                </div>
+                <div class="history-actions">
+                    <button onclick="Calculator.generateInvoice('CUSTOMER', JSON.parse(decodeURIComponent('${safeJSON}')), '${namaDisplay}<br>${hp}', '${item.id}', '${item.id}')" 
+                        style="background:#17a2b8; color:white; font-size:12px; padding:8px;">
+                        🖨️ Print
                     </button>
                     
-                    <button onclick="History.cetakInvoiceServer('${trx.id}')" 
-                            style="flex:1; background:#007bff; color:white; border:none; padding:8px; border-radius:4px; font-weight:bold; cursor:pointer;">
-                        🖨️ Cetak Invoice
+                    <button onclick="History.editTransaksi('${item.id}', '${namaDisplay}', '${hp}', '${safeJSON}')" 
+                        style="background:#ffc107; color:#333; font-size:12px; padding:8px;">
+                        ✏️ Edit
                     </button>
                 </div>
             `;
             container.appendChild(card);
         });
-
-        // RENDER TOMBOL PAGINATION (Next/Prev)
-        this.renderPaginationControls(container);
     },
 
-    renderPaginationControls: function(container) {
-        const totalPages = Math.ceil(this.allData.length / this.itemsPerPage);
+    // 5. RENDER TOMBOL NEXT / PREV
+    renderPaginationControls: function() {
+        const container = document.getElementById('history-container');
+        const totalPages = Math.ceil(this.state.dataFiltered.length / this.state.itemsPerPage);
+
+        // Jika halamannya cuma 1, sembunyikan navigasi
+        if (totalPages <= 1) return;
+
+        const nav = document.createElement('div');
+        nav.className = 'pagination-container';
         
-        if (totalPages > 1) {
-            const nav = document.createElement('div');
-            nav.className = 'pagination-container';
-            nav.innerHTML = `
-                <button onclick="History.gantiHalaman(-1)" ${this.currentPage === 1 ? 'disabled' : ''}>⬅ Prev</button>
-                <span style="align-self:center; color:#666;">Hal ${this.currentPage} / ${totalPages}</span>
-                <button onclick="History.gantiHalaman(1)" ${this.currentPage === totalPages ? 'disabled' : ''}>Next ➡</button>
-            `;
-            container.appendChild(nav);
-        }
-    },
+        // Tombol PREV (Ikon Panah Kiri)
+        const btnPrev = document.createElement('button');
+        btnPrev.className = 'page-btn';
+        btnPrev.innerHTML = "❮"; // Panah Kiri
+        btnPrev.disabled = this.state.currentPage === 1;
+        btnPrev.onclick = () => {
+            if(this.state.currentPage > 1) {
+                this.state.currentPage--;
+                this.renderManager();
+                document.querySelector('.content-container').scrollIntoView({behavior: 'smooth'});
+            }
+        };
 
-    gantiHalaman: function(arah) {
-        this.currentPage += arah;
-        this.renderPage();
-        // Scroll ke atas otomatis biar enak
-        document.getElementById('view-history').scrollIntoView({ behavior: 'smooth' });
-    },
+        // Info Halaman (Chip Style)
+        const info = document.createElement('span');
+        info.className = 'page-info';
+        info.innerText = `${this.state.currentPage} / ${totalPages}`;
 
-    editTransaksi: function(id, nama, rawJson) {
-        const items = JSON.parse(decodeURIComponent(rawJson));
-        API.state.keranjang = items;
-        API.state.currentId = id;
-        document.getElementById('namaPelanggan').value = nama;
-        Calculator.renderKeranjang();
-        Router.to('calculator');
-        alert("Data dimuat untuk diedit!");
-    },
+        // Tombol NEXT (Ikon Panah Kanan)
+        const btnNext = document.createElement('button');
+        btnNext.className = 'page-btn';
+        btnNext.innerHTML = "❯"; // Panah Kanan
+        btnNext.disabled = this.state.currentPage === totalPages;
+        btnNext.onclick = () => {
+            if(this.state.currentPage < totalPages) {
+                this.state.currentPage++;
+                this.renderManager();
+                document.querySelector('.content-container').scrollIntoView({behavior: 'smooth'});
+            }
+        };
 
-    // FUNGSI BARU: AMBIL DATA DARI GSHEET -> PRINT PDF
-    cetakInvoiceServer: async function(id) {
-        if(!confirm("Cetak Invoice untuk Transaksi ini?")) return;
-
-        const btn = event.target;
-        const txt = btn.innerText;
-        btn.innerText = "⏳ Loading...";
-        btn.disabled = true;
-
-        const res = await API.ambilTransaksiById(id);
+        nav.appendChild(btnPrev);
+        nav.appendChild(info);
+        nav.appendChild(btnNext);
         
-        if (res.status === 'success') {
-            const dataItems = JSON.parse(res.data.itemsJSON);
-            const namaCust = res.data.namaPelanggan;
-            const noBaris = res.data.noBaris; // Ambil No Baris
-            const idTrx = res.data.id;        // Ambil ID Transaksi
+        container.appendChild(nav);
+    },
 
-            // Panggil Calculator dengan 5 Parameter
-            Calculator.generateInvoice('CUSTOMER', dataItems, namaCust, noBaris, idTrx);
-        } else {
-            alert("Gagal mengambil data: " + res.message);
-        }
-
-        btn.innerText = txt;
-        btn.disabled = false;
+    // 6. ACTION EDIT
+    editTransaksi: function(id, nama, hp, rawJson) {
+        if(!confirm(`Edit transaksi milik ${nama}?\nData saat ini di kalkulator akan ditimpa.`)) return;
+        
+        localStorage.setItem('edit_trx_id', id);
+        localStorage.setItem('edit_trx_nama', nama);
+        localStorage.setItem('edit_trx_hp', hp); // SIMPAN HP
+        localStorage.setItem('edit_trx_data', rawJson);
+        
+        window.location.href = 'calculator.html';
     }
 };

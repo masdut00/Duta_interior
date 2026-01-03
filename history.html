@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat - Duta Decor</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* Style search bar sederhana */
+        .search-container {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <section class="view active">
+        <div class="nav-bar">
+            <a href="dashboard.html" class="btn-back" style="text-decoration:none;">⬅ Menu Utama</a>
+            <h3>Riwayat Transaksi</h3>
+        </div>
+
+        <div class="content-container">
+            <div class="search-container">
+                <input type="text" id="searchHistory" placeholder="🔍 Cari nama pelanggan / tanggal..." onkeyup="History.filterData()">
+            </div>
+
+            <div id="history-container" class="history-list">
+                <p style="text-align:center; padding:20px; color:#666;">⏳ Sedang mengambil data...</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="invoice-area" style="display: none;"></div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/calculator.js"></script> <script src="js/history.js"></script>
+
+    <script>
+        CONFIG.checkAuth();
+        window.onload = function() {
+            History.init(); // Panggil Init, bukan render langsung
+        };
+    </script>
+</body>
+</html>
